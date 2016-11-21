@@ -9,10 +9,8 @@ import time
 from pygame.locals import *
 
 #Defining some constants for the game:
-W_WIDTH = 640
-W_HEIGT = 480
-B_WIDTH = 10
-B_HEIGHT = 20
+WIDTH = 800
+HEIGHT = 600
 
 
 #Define Colors
@@ -29,4 +27,30 @@ L_BLUE    = ( 20,   20, 175)
 L_RED     = (175,   20,  20)
 
 
-BACKG_COLOR = BLACK
+BACKG_COLOR1 = WHITE
+BACKG_COLOR2 = BLACK 
+
+class Cube(pygame.sprite.Sprite):
+	def _init_(self, color, width, height):
+
+		self.image = pygame.surface([width, height])
+
+		self.image.fill(color)
+
+		self.rect = self.image.get_rect()
+
+pygame.init()
+
+Cube_list = pygame.sprite.Group()
+
+all_sprites_list = pygame.sprite.Group()
+
+for i in range(75):
+	cube = Cube(BLUE, 20, 20)
+
+	cube.rect.x = random.randrange(WIDTH)
+	cube.rect.y = random.randrange(HEIGHT)
+
+	Cube_list.add(cube)
+	all_sprites_list.add(cube)
+	
