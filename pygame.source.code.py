@@ -89,6 +89,19 @@ def create_cubes():
 		cube_list.add(cube)
 		all_sprites_list.add(cube)
 
+def messages(num):
+	if num == 1:
+		screen.fill(WHITE)
+		label = myfont.render("GAME OVER!", 1, BLACK)
+		screen.blit(label, (250, 200))
+		pygame.display.flip()
+	if num == 2:
+		screen.fill(WHITE)
+		label2 = myfont.render("CUBE RUNNER", 1, BLACK)
+		screen.blit(label2, (250, 200))
+		pygame.display.flip()
+
+
 pygame.init()
 
 #movement speed
@@ -109,15 +122,18 @@ all_sprites_list.add(player)
 #loop variable
 done = False
 
+#Initialize Font Module
 pygame.font.init()
+#Specify the font that you want and size
 myfont = pygame.font.SysFont("monospace", 75)
 
+#Keep track of time
 clock = pygame.time.Clock()
 
-
-player_list.draw(screen)
-
-pygame.time.delay(300)
+#Displays Game Name at start
+messages(2)
+#Pauses program for a few seconds before running game
+pygame.time.delay(1500)
 
 
 #-----MAIN--LOOP------------MAIN--LOOP----------MAIN--LOOP----------#
@@ -169,16 +185,8 @@ while done == False:
 
 	#GAME LOGIC
 	if game_over(cube_collide_list):
-		screen.fill(WHITE)
-
-		label = myfont.render("GAME OVER!", 1, BLACK)
-
-		screen.blit(label, (250, 300))
-
-		pygame.display.flip()
-
+		messages(1)
 		done = True
-
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				if event.type == KEYDOWN:
