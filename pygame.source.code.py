@@ -24,6 +24,7 @@ YELLOW    = (255, 255,    0)
 RED       = (255,   0,    0)
 BLUE      = (  0,   0,  255)
 GREEN     = (  0, 255,    0)
+L_GREEN   = (124, 252,    0)
 ORANGE    = (255, 140,    0)
 PURPLE    = (148,   0,  211)
 
@@ -47,10 +48,14 @@ class Cube(pygame.sprite.Sprite):
 		self.rect = self.image.get_rect()
 
 	def update(self):
-		self.rect.y +=6
+		self.rect.y +=3
 		if self.rect.y > 610:
 			self.rect.y = -25
-		
+
+	def speed_up(self):
+		self.rect.y += 5
+		if self.rect.y > 610:
+			self.rect.y = -25		
 
 class Player(pygame.sprite.Sprite):
 	def __init__(self, width, height):
@@ -78,16 +83,23 @@ def game_over(collide_list):
 	if len(collide_list) > 0:
 		return True
 
-def create_cubes():
+def level_1_cubes():
 	#Actually creating the cubes
 	for i in range(75):
 		cube = Cube(random_color(), 25, 25)
-
-		cube.rect.x = random.randrange(WIDTH - 20)
-		cube.rect.y = random.randrange(HEIGHT - 20)
-
+		cube.rect.x = random.randrange(WIDTH - 25)
+		cube.rect.y = random.randrange(515)
 		cube_list.add(cube)
 		all_sprites_list.add(cube)
+
+def level_up():
+	level += 1
+	for i in range(level * 7):
+		new_cube = Cube(random_color(), 25, 25)
+		new_cube.rect.x = random.randrange(WIDTH - 25)
+		new_cube.rect.y = random.randrange(HEIGHT -25)
+		cube_list.add(new_cube)
+		all_sprites_list.add(new_cube)
 
 def messages(num):
 	if num == 1:
@@ -98,7 +110,7 @@ def messages(num):
 	if num == 2:
 		screen.fill(WHITE)
 		label2 = myfont.render("CUBE RUNNER", 1, BLACK)
-		screen.blit(label2, (250, 200))
+		screen.blit(label2, (230, 200))
 		pygame.display.flip()
 
 
@@ -112,7 +124,7 @@ y_speed = 0
 screen = pygame.display.set_mode([WIDTH, HEIGHT])
 
 #add cubes into the game
-create_cubes()
+level_1_cubes()
 
 #Create a player
 player = Player(20, 20)
@@ -135,6 +147,8 @@ messages(2)
 #Pauses program for a few seconds before running game
 pygame.time.delay(1500)
 
+level = 1
+
 
 #-----MAIN--LOOP------------MAIN--LOOP----------MAIN--LOOP----------#
 
@@ -146,9 +160,9 @@ while done == False:
 
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_LEFT:
-				x_speed -= 7
+				x_speed -= 10
 			if event.key == pygame.K_RIGHT:
-				x_speed += 7
+				x_speed += 10
 			if event.key == pygame.K_UP:
 				y_speed -= 3
 			if event.key == pygame.K_DOWN:
@@ -171,17 +185,25 @@ while done == False:
 	player.rect.x += x_speed
 	player.rect.y += y_speed
 
-	#detect if player has collided with cubes
-	cube_collide_list = pygame.sprite.spritecollide(player, cube_list, False)
-
 	#Draw player
 	player_list.draw(screen)
 
-	#Draw cubes
+
+	#detect if player has collided with cubes
+	cube_collide_list = pygame.sprite.spritecollide(player, cube_list, False)
+	
 	cube_list.draw(screen)
 
-	#moving the cubes down the screen
 	cube_list.update()
+
+	if len(cube_collide_list) == 0 and pygame.time.get_ticks() > 30000 and pygame.time.get_ticks() < 30050:
+		level += 1
+		for i in range(level * 7):
+			new_cube = Cube(random_color(), 25, 25)
+			new_cube.rect.x = random.randrange(WIDTH - 25)
+			new_cube.rect.y = random.randrange(HEIGHT -25)
+			cube_list.add(new_cube)
+			all_sprites_list.add(new_cube)
 
 	#GAME LOGIC
 	if game_over(cube_collide_list):
