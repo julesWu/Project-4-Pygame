@@ -27,6 +27,7 @@ GREEN     = (  0, 255,    0)
 L_GREEN   = (124, 252,    0)
 ORANGE    = (255, 140,    0)
 PURPLE    = (148,   0,  211)
+D_TURQ	  = (  0, 206,  209)
 
 BACKG_COLOR1 = WHITE
 BACKG_COLOR2 = BLACK 
@@ -51,11 +52,6 @@ class Cube(pygame.sprite.Sprite):
 		self.rect.y +=3
 		if self.rect.y > 610:
 			self.rect.y = -25
-
-	def speed_up(self):
-		self.rect.y += 5
-		if self.rect.y > 610:
-			self.rect.y = -25		
 
 class Player(pygame.sprite.Sprite):
 	def __init__(self, width, height):
@@ -85,7 +81,7 @@ def game_over(collide_list):
 
 def level_1_cubes():
 	#Actually creating the cubes
-	for i in range(75):
+	for i in range(50):
 		cube = Cube(random_color(), 25, 25)
 		cube.rect.x = random.randrange(WIDTH - 25)
 		cube.rect.y = random.randrange(515)
@@ -196,10 +192,29 @@ while done == False:
 
 	cube_list.update()
 
+
 	if len(cube_collide_list) == 0 and pygame.time.get_ticks() > 30000 and pygame.time.get_ticks() < 30050:
 		level += 1
 		for i in range(level * 7):
 			new_cube = Cube(random_color(), 25, 25)
+			new_cube.rect.x = random.randrange(WIDTH - 25)
+			new_cube.rect.y = random.randrange(HEIGHT -25)
+			cube_list.add(new_cube)
+			all_sprites_list.add(new_cube)
+
+	if len(cube_collide_list) == 0 and pygame.time.get_ticks() > 45000 and pygame.time.get_ticks() < 45050:
+		level += 1
+		for i in range(level * 7):
+			new_cube = Cube(L_GREEN, 25, 25)
+			new_cube.rect.x = random.randrange(WIDTH - 25)
+			new_cube.rect.y = random.randrange(HEIGHT -25)
+			cube_list.add(new_cube)
+			all_sprites_list.add(new_cube)
+
+	if len(cube_collide_list) == 0 and pygame.time.get_ticks() > 75000 and pygame.time.get_ticks() < 75050:
+		level += 1
+		for i in range(level * 7):
+			new_cube = Cube(D_TURQ, 25, 25)
 			new_cube.rect.x = random.randrange(WIDTH - 25)
 			new_cube.rect.y = random.randrange(HEIGHT -25)
 			cube_list.add(new_cube)
