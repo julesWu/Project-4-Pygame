@@ -2,6 +2,7 @@ import random
 import pygame, sys
 import time
 from pygame.locals import *
+from pygame import mixer
 
 #initialize font module
 pygame.font.init()
@@ -88,6 +89,7 @@ class Game():
 
 	def __init__(self):
 		self.game_over = False
+		self.level = 1
 		self.cube_list = pygame.sprite.Group()
 		self.all_sprites_list = pygame.sprite.Group()
 
@@ -111,6 +113,22 @@ class Game():
 			if event.type == pygame.MOUSEBUTTONDOWN:
 				if self.game_over:
 					self.__init__()
+			if event.type == pygame.USEREVENT+1:
+				self.level += 1
+				for i in range(self.level * 10):
+					if self.level % 2 == 0:
+						new_cube = Cube(random_color(), 25, 25)
+						new_cube.rect.x = random.randrange(WIDTH - 25)
+						new_cube.rect.y = random.randrange(HEIGHT -25)
+						self.cube_list.add(new_cube)
+						self.all_sprites_list.add(new_cube)
+					else:
+						new_cube = Cube(D_TURQ, 25, 25)
+						new_cube.rect.x = random.randrange(WIDTH - 25)
+						new_cube.rect.y = random.randrange(HEIGHT -25)
+						self.cube_list.add(new_cube)
+						self.all_sprites_list.add(new_cube)
+				pygame.display.flip()
 
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_LEFT:
@@ -136,42 +154,14 @@ class Game():
 	def game_logic(self):
 		if not self.game_over:
 			self.player.update()
-			if pygame.time.get_ticks() < 85000:
-				self.cube_list.update()
+			self.cube_list.update()
 			cube_collide_list = pygame.sprite.spritecollide(self.player, self.cube_list, False)
 
-			if len(cube_collide_list) == 0 and pygame.time.get_ticks() > 30000 and pygame.time.get_ticks() < 30050:
-				self.level += 1
-				for i in range(self.level * 10):
-					new_cube = Cube(random_color(), 25, 25)
-					new_cube.rect.x = random.randrange(WIDTH - 25)
-					new_cube.rect.y = random.randrange(HEIGHT -25)
-					self.cube_list.add(new_cube)
-					self.all_sprites_list.add(new_cube)
-
-			if len(cube_collide_list) == 0 and pygame.time.get_ticks() > 45000 and pygame.time.get_ticks() < 45050:
-				self.level += 1
-				for i in range(self.level * 10):
-					new_cube = Cube(L_GREEN, 25, 25)
-					new_cube.rect.x = random.randrange(WIDTH - 25)
-					new_cube.rect.y = random.randrange(HEIGHT -25)
-					self.cube_list.add(new_cube)
-					self.all_sprites_list.add(new_cube)
-
-			if len(cube_collide_list) == 0 and pygame.time.get_ticks() > 75000 and pygame.time.get_ticks() < 75050:
-				self.level += 1
-				for i in range(self.level * 10):
-					new_cube = Cube(D_TURQ, 25, 25)
-					new_cube.rect.x = random.randrange(WIDTH - 25)
-					new_cube.rect.y = random.randrange(HEIGHT -25)
-					self.cube_list.add(new_cube)
-					self.all_sprites_list.add(new_cube)	
-
-			if pygame.time.get_ticks() > 85000:
-				for cube in self.cube_list:
-					cube.rect.y += 5
-					if cube.rect.y > 610:
-						cube.rect.y = -25	
+			#if pygame.time.get_ticks() > 85000:
+				#for cube in self.cube_list:
+					#cube.rect.y += 5
+					#if cube.rect.y > 610:
+						#cube.rect.y = -25	
 
 			if len(cube_collide_list) > 0:
 				self.game_over = True
@@ -193,12 +183,15 @@ def main():
 	pygame.init()
 	screen = pygame.display.set_mode([WIDTH, HEIGHT])
 	pygame.display.set_caption("Cube Runner")
+	#background_music = pygame.mixer.Sound("background.mp3")
 	done = False
 	clock = pygame.time.Clock()
+	pygame.time.set_timer(USEREVENT+1, 15000)
 
 	game = Game()
 
 	while not done:
+		#background_music.play()
 		done = game.run_game_events()
 
 		game.game_logic()
