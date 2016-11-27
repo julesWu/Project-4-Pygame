@@ -6,6 +6,7 @@ from pygame import mixer
 
 #initialize font module
 pygame.font.init()
+pygame.mixer.init()
 
 #Defining some constants for the game:
 WIDTH = 800
@@ -154,14 +155,15 @@ class Game():
 	def game_logic(self):
 		if not self.game_over:
 			self.player.update()
-			self.cube_list.update()
+			if self.level < 4:
+				self.cube_list.update()
 			cube_collide_list = pygame.sprite.spritecollide(self.player, self.cube_list, False)
 
-			#if pygame.time.get_ticks() > 85000:
-				#for cube in self.cube_list:
-					#cube.rect.y += 5
-					#if cube.rect.y > 610:
-						#cube.rect.y = -25	
+			if self.level > 3:
+				for cube in self.cube_list:
+					cube.rect.y += 5
+					if cube.rect.y > 610:
+						cube.rect.y = -25	
 
 			if len(cube_collide_list) > 0:
 				self.game_over = True
@@ -183,7 +185,7 @@ def main():
 	pygame.init()
 	screen = pygame.display.set_mode([WIDTH, HEIGHT])
 	pygame.display.set_caption("Cube Runner")
-	#background_music = pygame.mixer.Sound("background.mp3")
+	#background_music = pygame.mixer.Sound("explosions.wav")
 	done = False
 	clock = pygame.time.Clock()
 	pygame.time.set_timer(USEREVENT+1, 15000)
