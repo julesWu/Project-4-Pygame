@@ -167,11 +167,11 @@ class Game():
 					self.cube_list.add(new_cube)
 					self.all_sprites_list.add(new_cube)	
 
-			if pygame.get_ticks() > 8500:
+			if pygame.time.get_ticks() > 85000:
 				for cube in self.cube_list:
 					cube.rect.y += 5
-				if self.rect.y > 610:
-						self.rect.y = -25	
+					if cube.rect.y > 610:
+						cube.rect.y = -25	
 
 			if len(cube_collide_list) > 0:
 				self.game_over = True
