@@ -27,24 +27,27 @@ PURPLE    = (148,   0,  211)
 D_TURQ	  = (  0, 206,  209)
 
 BACKG_COLOR1 = WHITE
-BACKG_COLOR2 = BLACK
 
 #Initialize Font Module
 pygame.font.init()
 #Specify the font that you want and size
-myfont = pygame.font.SysFont("monospace", 75)
+myfont = pygame.font.SysFont("monospace", 70)
 
-
+#A class definition for the cubes in my game
 class Cube(pygame.sprite.Sprite):
+	#default constructor for cube class
 	def __init__(self, color, width, height):
 		pygame.sprite.Sprite.__init__(self)
 		self.image = pygame.Surface([width, height])
 		self.image.fill(color)
 		self.rect = self.image.get_rect()
 
+	#updating cubes to move them down the screen
 	def update(self):
 		self.rect.y +=3
+		#if they are already off the screen
 		if self.rect.y > 610:
+			#reset their y position
 			self.rect.y = -25
 
 class Player(pygame.sprite.Sprite):
@@ -172,8 +175,10 @@ class Game():
 		screen.fill(WHITE)
 
 		if self.game_over:
-			label = myfont.render("GAME OVER!", 1, BLACK)
-			screen.blit(label, (100, 200))
+			label = myfont.render("GAME OVER! ", 1, BLACK)
+			restart = myfont.render("Click to restart.", 1, BLACK)
+			screen.blit(label, (275, 200))
+			screen.blit(restart, (250, 300))
 		
 		if not self.game_over:
 			screen.fill(WHITE)
@@ -182,13 +187,18 @@ class Game():
 		pygame.display.flip()
 
 def main():
+	pygame.mixer.pre_init(44100, 16, 2, 4096)
 	pygame.init()
 	screen = pygame.display.set_mode([WIDTH, HEIGHT])
 	pygame.display.set_caption("Cube Runner")
 	#background_music = pygame.mixer.Sound("explosions.wav")
 	done = False
 	clock = pygame.time.Clock()
-	pygame.time.set_timer(USEREVENT+1, 15000)
+	pygame.time.set_timer(USEREVENT+1, 25000)
+
+	#pygame.mixer.music.load("background.mp3")
+	#pygame.mixer.music.set_volume(0.5)
+	#pygame.mixer.music.play(-1)
 
 	game = Game()
 
