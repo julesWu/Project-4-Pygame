@@ -32,6 +32,7 @@ BACKG_COLOR1 = WHITE
 pygame.font.init()
 #Specify the font that you want and size
 myfont = pygame.font.SysFont("monospace", 70)
+myfont2 = pygame.font.SysFont("monospace", 30)
 
 #A class definition for the cubes in my game
 class Cube(pygame.sprite.Sprite):
@@ -50,9 +51,13 @@ class Cube(pygame.sprite.Sprite):
 			#reset their y position
 			self.rect.y = -25
 
+#A class definition for the player in the game
 class Player(pygame.sprite.Sprite):
+	#variables to adjust the movement of the player
+	#initialized to zero
 	x_speed = 0
 	y_speed = 0
+	#default constructor for player class
 	def __init__(self, width, height):
 		pygame.sprite.Sprite.__init__(self)
 		self.image = pygame.Surface([width,height])
@@ -61,10 +66,21 @@ class Player(pygame.sprite.Sprite):
 		self.rect.x = 400
 		self.rect.y = 550
 
+	#member function to update the movement of the player
 	def update(self):
 		self.rect.x += self.x_speed
 		self.rect.y += self.y_speed
+		#Handles the case when player tries to go off the screen
+		if self.rect.y < 0:
+			self.rect.y = 0
+		elif self.rect.x < 0:
+			self.rect.x = 0
+		elif self.rect.x > WIDTH:
+			self.rect.x = WIDTH
+		elif self.rect.y > HEIGHT - 20:
+			self.rect.y = HEIGHT - 20
 
+#A function that produces random colors
 def random_color():
 	num = random.randint(1,5)
 	if num == 1:
@@ -78,6 +94,7 @@ def random_color():
 	elif num == 5:
 		return YELLOW	
 
+#A class to handle the mechanics of the game
 class Game():
 	#A list to keep track of all the cubes
 	cube_list = None
@@ -91,9 +108,16 @@ class Game():
 	#Variable to detect when game is gover
 	game_over = False
 
+	#Keep track of score
+	score = 0
+
+	restart_time = 0
+
+	#The default constructor for the game class
 	def __init__(self):
 		self.game_over = False
 		self.level = 1
+		self.score = 0
 		self.cube_list = pygame.sprite.Group()
 		self.all_sprites_list = pygame.sprite.Group()
 
@@ -109,6 +133,7 @@ class Game():
 		self.player = Player(20, 20)
 		self.all_sprites_list.add(self.player)
 
+	# member function that deals with the movements in the game
 	def run_game_events(self):
 		#Handling movement of the player
 		for event in pygame.event.get():
@@ -117,6 +142,7 @@ class Game():
 			if event.type == pygame.MOUSEBUTTONDOWN:
 				if self.game_over:
 					self.__init__()
+					self.restart_time = pygame.time.get_ticks()
 			if event.type == pygame.USEREVENT+1:
 				self.level += 1
 				for i in range(self.level * 10):
@@ -134,6 +160,7 @@ class Game():
 						self.all_sprites_list.add(new_cube)
 				pygame.display.flip()
 
+			#When the key is down, adjust player position accordingly
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_LEFT:
 					self.player.x_speed -= 10
@@ -144,6 +171,7 @@ class Game():
 				if event.key == pygame.K_DOWN:
 					self.player.y_speed += 3 
 
+			# When the key is up, adjust player position accordingly
 			if event.type == pygame.KEYUP:
 				if event.key == pygame.K_LEFT:
 					self.player.x_speed = 0
@@ -157,9 +185,12 @@ class Game():
 
 	def game_logic(self):
 		if not self.game_over:
+
 			self.player.update()
+
 			if self.level < 4:
 				self.cube_list.update()
+
 			cube_collide_list = pygame.sprite.spritecollide(self.player, self.cube_list, False)
 
 			if self.level > 3:
@@ -183,6 +214,9 @@ class Game():
 		if not self.game_over:
 			screen.fill(WHITE)
 			self.all_sprites_list.draw(screen)
+			self.score = pygame.time.get_ticks()
+			score_text = myfont2.render("SCORE: " + str(self.score - self.restart_time), 1, BLACK)
+			screen.blit(score_text, (15, 15))
 			
 		pygame.display.flip()
 
@@ -196,14 +230,14 @@ def main():
 	clock = pygame.time.Clock()
 	pygame.time.set_timer(USEREVENT+1, 25000)
 
-	#pygame.mixer.music.load("background.mp3")
-	#pygame.mixer.music.set_volume(0.5)
-	#pygame.mixer.music.play(-1)
-
+	#create an instance of game
 	game = Game()
+	if not game.game_over:
+		pygame.mixer.music.load("background.wav")
+		pygame.mixer.music.set_volume(0.5)
+		pygame.mixer.music.play()
 
 	while not done:
-		#background_music.play()
 		done = game.run_game_events()
 
 		game.game_logic()
@@ -212,6 +246,9 @@ def main():
 
 		clock.tick(20)
 
+	if game.game_over:
+		pygame.mixer.music.stop()
+	
 	pygame.quit()
 
 #Calling the main function to start game
