@@ -1,10 +1,13 @@
+#Name: Julia Wu
+#Project 4: Pygame
+
 import random
 import pygame, sys
 import time
 from pygame.locals import *
 from pygame import mixer
 
-#initialize font module
+#initialize font module and music module
 pygame.font.init()
 pygame.mixer.init()
 
@@ -182,52 +185,71 @@ class Game():
 				if event.key == pygame.K_DOWN:
 					self.player.y_speed = 0
 
-
+	#Member function to handle the logic of the game
 	def game_logic(self):
+		#if the game is not over
 		if not self.game_over:
-
+			#update the player's movement
 			self.player.update()
-
+			#if the level is less than 4, update cubes using the update function in cube class
 			if self.level < 4:
 				self.cube_list.update()
-
+			#A list to detect collisions between player and cubes
 			cube_collide_list = pygame.sprite.spritecollide(self.player, self.cube_list, False)
-
+			#if the level is greater than 3, speed up the cubes 
 			if self.level > 3:
 				for cube in self.cube_list:
 					cube.rect.y += 5
 					if cube.rect.y > 610:
 						cube.rect.y = -25	
-
+			#if there is a collision, the game is over
 			if len(cube_collide_list) > 0:
 				self.game_over = True
 
+	#Member function to print messages to the screen
 	def display_messages(self, screen):
 		screen.fill(WHITE)
-
+		#if the game is over
 		if self.game_over:
+			#print game over
 			label = myfont.render("GAME OVER! ", 1, BLACK)
+			#print click to restart
 			restart = myfont.render("Click to restart.", 1, BLACK)
+			#print player score
+			score_label = myfont.render("SCORE: " + str(self.score - self.restart_time), 1, BLACK)
+			#Display these messages to the screen
+			screen.blit(score_label, (265, 100))
 			screen.blit(label, (275, 200))
 			screen.blit(restart, (250, 300))
 		
+		#if the game is not over
 		if not self.game_over:
 			screen.fill(WHITE)
+			#draw all the objects on the screen
 			self.all_sprites_list.draw(screen)
+			#keep track of score
 			self.score = pygame.time.get_ticks()
 			score_text = myfont2.render("SCORE: " + str(self.score - self.restart_time), 1, BLACK)
+			#print score onto screen
 			screen.blit(score_text, (15, 15))
 			
 		pygame.display.flip()
 
+#main loop
 def main():
+	#initialize pygame mixer 
 	pygame.mixer.pre_init(44100, 16, 2, 4096)
+	#initialize pygame
 	pygame.init()
+	#set screen
 	screen = pygame.display.set_mode([WIDTH, HEIGHT])
+	#set caption of the screen
 	pygame.display.set_caption("Cube Runner")
-	#background_music = pygame.mixer.Sound("explosions.wav")
+	#initialize loop variable
 	done = False
+	#initialize game clock
 	clock = pygame.time.Clock()
+	#increase cubes every 25 seconds
 	pygame.time.set_timer(USEREVENT+1, 25000)
 
 	#create an instance of game
@@ -237,18 +259,23 @@ def main():
 		pygame.mixer.music.set_volume(0.5)
 		pygame.mixer.music.play()
 
-	while not done:
-		done = game.run_game_events()
-
-		game.game_logic()
-
-		game.display_messages(screen)
-
-		clock.tick(20)
-
 	if game.game_over:
 		pygame.mixer.music.stop()
-	
+
+	#while the game is not done
+	while not done:
+		#Run the events in the game
+		done = game.run_game_events()
+
+		#Run game logic
+		game.game_logic()
+
+		#dispaly the messages of the game on the screen
+		game.display_messages(screen)
+
+		#set frames
+		clock.tick(20)
+
 	pygame.quit()
 
 #Calling the main function to start game
