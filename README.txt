@@ -6,6 +6,8 @@ INSTRUCTIONS:
 
  Player is represented by black block.
 
+ Press left and right arrow keys to move block around the screen.
+
  There are infinite levels.
 
  Good Luck.
