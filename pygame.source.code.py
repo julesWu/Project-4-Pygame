@@ -1,5 +1,7 @@
 #Name: Julia Wu
 #Project 4: Pygame
+#References: Youtube Tutorials, pygame website, office hours
+#More References: Paul Vincent Craven Website for Pygame
 
 import random
 import pygame, sys
@@ -28,8 +30,6 @@ L_GREEN   = (124, 252,    0)
 ORANGE    = (255, 140,    0)
 PURPLE    = (148,   0,  211)
 D_TURQ	  = (  0, 206,  209)
-
-BACKG_COLOR1 = WHITE
 
 #Initialize Font Module
 pygame.font.init()
@@ -114,6 +114,8 @@ class Game():
 	#Keep track of score
 	score = 0
 
+	#Variable to make sure the score is accurate 
+	#each time the person plays
 	restart_time = 0
 
 	#The default constructor for the game class
@@ -146,6 +148,7 @@ class Game():
 				if self.game_over:
 					self.__init__()
 					self.restart_time = pygame.time.get_ticks()
+					pygame.mixer.music.play()
 			if event.type == pygame.USEREVENT+1:
 				self.level += 1
 				for i in range(self.level * 10):
@@ -201,7 +204,8 @@ class Game():
 				for cube in self.cube_list:
 					cube.rect.y += 5
 					if cube.rect.y > 610:
-						cube.rect.y = -25	
+						cube.rect.y = -25
+
 			#if there is a collision, the game is over
 			if len(cube_collide_list) > 0:
 				self.game_over = True
@@ -262,7 +266,7 @@ def main():
 	if not game.game_over:
 		pygame.mixer.music.load("background.wav")
 		pygame.mixer.music.set_volume(0.5)
-		pygame.mixer.music.play(-1)
+		pygame.mixer.music.play(5)
 
 	#while the game is not done
 	while not done:
@@ -277,6 +281,10 @@ def main():
 
 		#set frames
 		clock.tick(20)
+
+		#make the music stop
+		if game.game_over:
+			pygame.mixer.music.stop()
 
 	pygame.quit()
 
