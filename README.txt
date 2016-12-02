@@ -6,7 +6,7 @@ INSTRUCTIONS:
 
  Player is represented by black block.
 
- Press left and right arrow keys to move block around the screen.
+ Press left and right arrow keys to move player around the screen.
 
  There are infinite levels.
 
