@@ -78,8 +78,8 @@ class Player(pygame.sprite.Sprite):
 			self.rect.y = 0
 		elif self.rect.x < 0:
 			self.rect.x = 0
-		elif self.rect.x > WIDTH:
-			self.rect.x = WIDTH
+		elif self.rect.x > WIDTH-20:
+			self.rect.x = WIDTH-20
 		elif self.rect.y > HEIGHT - 20:
 			self.rect.y = HEIGHT - 20
 
@@ -209,8 +209,21 @@ class Game():
 	#Member function to print messages to the screen
 	def display_messages(self, screen):
 		screen.fill(WHITE)
+
+		#if the game is not over
+		if not self.game_over:
+			#draw all the objects on the screen
+			self.all_sprites_list.draw(screen)
+			#keep track of score
+			self.score = pygame.time.get_ticks()
+			score_text = myfont2.render("SCORE: " + str(self.score - self.restart_time), 1, BLACK)
+			#print score onto screen
+			level_text = myfont2.render("LEVEL: " + str(self.level), 1, BLACK)
+			screen.blit(level_text, (15, 35))
+			screen.blit(score_text, (15, 15))
+
 		#if the game is over
-		if self.game_over:
+		elif self.game_over:
 			#print game over
 			label = myfont.render("GAME OVER! ", 1, BLACK)
 			#print click to restart
@@ -222,17 +235,7 @@ class Game():
 			screen.blit(label, (275, 200))
 			screen.blit(restart, (250, 300))
 		
-		#if the game is not over
-		if not self.game_over:
-			screen.fill(WHITE)
-			#draw all the objects on the screen
-			self.all_sprites_list.draw(screen)
-			#keep track of score
-			self.score = pygame.time.get_ticks()
-			score_text = myfont2.render("SCORE: " + str(self.score - self.restart_time), 1, BLACK)
-			#print score onto screen
-			screen.blit(score_text, (15, 15))
-			
+
 		pygame.display.flip()
 
 #main loop
@@ -254,13 +257,12 @@ def main():
 
 	#create an instance of game
 	game = Game()
+
+	#Play background music in game
 	if not game.game_over:
 		pygame.mixer.music.load("background.wav")
 		pygame.mixer.music.set_volume(0.5)
-		pygame.mixer.music.play()
-
-	if game.game_over:
-		pygame.mixer.music.stop()
+		pygame.mixer.music.play(-1)
 
 	#while the game is not done
 	while not done:
